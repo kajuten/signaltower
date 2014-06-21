@@ -1,3 +1,12 @@
+/** @file essentials.h
+ *  @brief Binds every useful library with all its functions, macros, constants
+ *         and global variables to use with Atmega.
+ *
+ *  !!!This is only tested with Atmega8 and Atmega16
+ *
+ *  @author Julian Kaltenhofer
+ */
+ 
 #ifndef ESSENTIALS_H
 #define	ESSENTIALS_H
 
@@ -44,57 +53,53 @@
  */
  
 /**
- *  @brief   wait for a maxium of 65535 ms (2^16 -1)
+ *  @brief Waits for a maxium of 65535 ms.
  *
- * uses Timer 2, prescaler is 64
+ *  uses timer 2
  *
- *  @param   delay in ms
- *  @return  none
+ *  @param delay value in ms
+ *  @return none
  */
-extern void wait(uint16_t delay);
+extern void wait_ms (uint16_t delay);
 
 /**
- *  @brief   initialize ADC
+ *  @brief Initializes the ADC.
  *
- * set left adjust result, save the highest 8 bit in ADCH
- * set prescaler to 64
- * enable ADC
- *
- *  @param   none
- *  @return  none
+ *  @param none
+ *  @return none
  */
-extern void ADC_init(void);
+extern void ADC_init (void);
 
 /**
- *  @brief   read ADC to discard wrong value
+ *  @brief Read ADC to discard wrong value.
  *
- * after channel change a dummy readout is required
- * guarantees to get the correct ADC value
+ *  after channel change a dummy readout is required
+ *  guarantees to get the correct ADC value
  *
- *  @param   none
- *  @return  none
+ *  @param none
+ *  @return none
  */
-extern void ADC_dummy_readout(void);
+extern void ADC_dummy_readout (void);
 
 /**
- *  @brief   read the specified ADC channel 
+ *  @brief Read the specified ADC channel.
  *
- * Read mode: single conversion
+ *  Read mode: single conversion
  *
- *  @param   channel channel to be read
- *  @return  measurement
+ *  @param channel channel to be read
+ *  @return highest 8 bit of 10 bit measurement
  */
-extern uint8_t ADC_read(uint8_t channel);
+extern uint8_t ADC_read (uint8_t channel);
 
 /**
- *  @brief   read the specified ADC channel 
+ *  @brief Read the specified ADC channel.
  *
- * Read mode: single conversion
+ *  Read mode: single conversion
  *
- *  @param   channel channel to be read
- *  @param   n specify the number of measurements
- *  @return  averaged measurement
+ *  @param channel channel to be read
+ *  @param n specify the number of measurements
+ *  @return averaged measurement
  */
-extern uint8_t ADC_read_avg(uint8_t channel, uint8_t n);
+extern uint8_t ADC_read_avg (uint8_t channel, uint8_t n);
 
 #endif
