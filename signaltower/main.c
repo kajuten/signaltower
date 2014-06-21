@@ -1,6 +1,6 @@
 #include "include/essentials.h"
 
 int
-main(int argc, char **argv) {
-  return 0;
+main (int argc, char **argv) {
+    return 0;
 }

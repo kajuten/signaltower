@@ -1,11 +1,4 @@
-#include <avr/io.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-
-#include "essentials.h"
-#include "debounce.h"
+#include "include/essentials.h"
 
 ISR(TIMER0_OVF_vect)      
 /*************************************************************************
