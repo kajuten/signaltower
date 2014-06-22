@@ -74,7 +74,7 @@ spi_xfer (unint8_t data) {
 	// wait for serial transfer to complete
 	while (!(SPSR & (1 << SPIF))) ;
 
-	return data;
+	return SPDR;
 }
 
 //TODO: ISR
@@ -82,5 +82,5 @@ spi_xfer (unint8_t data) {
  *  @brief Interrupt SPI transmission/reception complete
  */
 ISR (SPI_STC_vect) {
-
+    
 }
