@@ -8,6 +8,24 @@
 
 #include "include/essentials.h"
 
+#if defined(__AVR_ATmega8__)
+ #define PORT_SPI  PORTB
+ #define DDR_SPI   DDRB
+ #define DD_SS     DDB2
+ #define DD_MOSI   DDB3
+ #define DD_MISO   DDB4
+ #define DD_SCK    DDB5
+#elif defined(__AVR_ATmega16__)
+ #define PORT_SPI  PORTB
+ #define DDR_SPI   DDRB
+ #define DD_SS     DDB4
+ #define DD_MOSI   DDB5
+ #define DD_MISO   DDB6
+ #define DD_SCK    DDB7
+#else
+ #error "No SPI definition for MCU available"
+#endif
+
 /**
  *  @brief Initialize spi as master.
  *
@@ -19,6 +37,7 @@
  */
 void
 spi_master_init (void) {
+    uint8_t tmp;
     // set MOSI, SCK, SS as output
     DDRB |= (1 << DD_MOSI) | (1 << DD_SCK) | (1 << DD_SS);
 
@@ -32,8 +51,8 @@ spi_master_init (void) {
 	SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR1) | (1 << SPIE);
 
 	// clear SPI Interrupt Flag by reading SPSR, SPDR
-	SPSR;
-	SPDR;
+	tmp = SPSR;
+	tmp = SPDR;
 }
 
 /**
@@ -46,19 +65,21 @@ spi_master_init (void) {
  */
 void
 spi_slave_init (void) {
+    uint8_t tmp;
     // set MISO as output
-    DDRB |= 1 << MISO;
+    DDRB |= 1 << DD_MISO;
 
 	// set MOSI, SCK, SS as input
-	DDRB &= ~(1 << DD_MOSI) & ~(1 << DD_SCK) & (1 << DD_SS);
+	DDRB &= ~((1 << DD_MOSI) | (1 << DD_SCK) | (1 << DD_SS));
 
 	// Enable SPI
 	// Prescaler: fosc / 4, to have a fast reaction time as slave
-	SPCR = (1 << SPE);
+	// Enable interrupts
+	SPCR = (1 << SPE) | (1 << SPIE);
 
 	// clear SPI Interrupt Flag by reading SPSR, SPDR
-	SPSR;
-	SPDR;
+	tmp = SPSR;
+	tmp = SPDR;
 }
 
 /**
@@ -68,7 +89,7 @@ spi_slave_init (void) {
  *  @return received value
  */
 uint8_t
-spi_xfer (unint8_t data) {
+spi_xfer (uint8_t data) {
     SPDR = data;
 
 	// wait for serial transfer to complete
@@ -82,5 +103,6 @@ spi_xfer (unint8_t data) {
  *  @brief Interrupt SPI transmission/reception complete
  */
 ISR (SPI_STC_vect) {
-    
+    uart_putc(SPDR);
+    PORTB = PORTB ^ 0x0f;
 }
