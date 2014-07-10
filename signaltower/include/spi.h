@@ -11,14 +11,14 @@
 
 #include "essentials.h"
 
+volatile uint8_t result;
+
 /*
  * Function prototypes
  */
  
 /**
  *  @brief Initialize spi as master.
- *
- *  interrupt driven
  *
  *  @param none
  *  @return none
@@ -27,8 +27,6 @@ extern void spi_master_init (void);
 
 /**
  *  @brief Initialize spi as slave.
- *
- *  interrupt driven
  *
  *  @param none
  *  @return none

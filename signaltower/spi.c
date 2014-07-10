@@ -7,6 +7,8 @@
  */
 
 #include "include/essentials.h"
+#include "include/spi.h"
+
 
 #if defined(__AVR_ATmega8__)
  #define PORT_SPI  PORTB
@@ -30,7 +32,6 @@
  *  @brief Initialize spi as master.
  *
  *  Set prescaler to fosc / 16
- *  interrupt driven
  *
  *  @param none
  *  @return none
@@ -38,7 +39,8 @@
 void
 spi_master_init (void) {
     uint8_t tmp;
-    // set MOSI, SCK, SS as output
+
+   // set MOSI, SCK, SS as output
     DDRB |= (1 << DD_MOSI) | (1 << DD_SCK) | (1 << DD_SS);
 
 	// set MISO as input
@@ -46,9 +48,8 @@ spi_master_init (void) {
 
 	// Enable SPI
 	// Set as master
-	// Prescaler: fosc / 64, to let the master process other things too
-	// Enable interrupts
-	SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR1) | (1 << SPIE);
+	// Prescaler: fosc / 16, to let the master process other things too
+	SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0);
 
 	// clear SPI Interrupt Flag by reading SPSR, SPDR
 	tmp = SPSR;
@@ -57,8 +58,6 @@ spi_master_init (void) {
 
 /**
  *  @brief Initialize spi as slave.
- *
- *  interrupt driven
  *
  *  @param none
  *  @return none
@@ -74,8 +73,7 @@ spi_slave_init (void) {
 
 	// Enable SPI
 	// Prescaler: fosc / 4, to have a fast reaction time as slave
-	// Enable interrupts
-	SPCR = (1 << SPE) | (1 << SPIE);
+	SPCR = (1 << SPE);
 
 	// clear SPI Interrupt Flag by reading SPSR, SPDR
 	tmp = SPSR;
@@ -97,12 +95,14 @@ spi_xfer (uint8_t data) {
 
 	return SPDR;
 }
-
+/*
 //TODO: ISR
 /**
  *  @brief Interrupt SPI transmission/reception complete
- */
+ *
 ISR (SPI_STC_vect) {
-    uart_putc(SPDR);
+    result = SPDR;
+    uart_putc(result);
     PORTB = PORTB ^ 0x0f;
 }
+*/
