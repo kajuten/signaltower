@@ -88,10 +88,13 @@ spi_slave_init (void) {
  */
 uint8_t
 spi_xfer (uint8_t data) {
+    PORT_SPI &= ~(1 << DD_SS);
     SPDR = data;
 
 	// wait for serial transfer to complete
 	while (!(SPSR & (1 << SPIF))) ;
+
+	PORT_SPI |= 1 << DD_SS;
 
 	return SPDR;
 }
@@ -101,6 +104,7 @@ spi_xfer (uint8_t data) {
  *  @brief Interrupt SPI transmission/reception complete
  *
 ISR (SPI_STC_vect) {
+    while (!(SPSR & (1 << SPIF))) ;
     result = SPDR;
     uart_putc(result);
     PORTB = PORTB ^ 0x0f;

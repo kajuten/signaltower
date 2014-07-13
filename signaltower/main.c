@@ -10,21 +10,14 @@ main (int argc, char **argv) {
     DDRB |= 0x0f;
 
     spi_master_init();
-    uart_init(UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU));
-
-    sei();
-
-    uart_puts("Hello World\n");
 
     while (1) {
-        for (i = 65; i < 71; i++) { // i in char: A, B, C, D, E, F
-            uart_putc(i);
+        for (i = 0; i < 16; i++) { // i in char: A, B, C, D, E, F
             send = spi_xfer(i);
-            uart_putc(send);
-            uart_putc('\n');
-            wait_ms(500);
+            PORTB = send & 0x0f;
+            wait_ms(2000);
         }
-        wait_ms(10000);
+        wait_ms(60000);
     }
 
     return 0;
